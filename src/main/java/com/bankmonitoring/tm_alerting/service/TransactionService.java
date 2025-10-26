@@ -32,15 +32,13 @@ public class TransactionService {
         // 1. save
         txn = transactionRepository.save(txn);
 
-        // 2. publish event (async-ish processing in listener)
+        // 2. publish event for async processing in listener
         domainEventPublisher.publishTransactionCreated(txn);
 
-        // 3. vẫn chạy rule sync để FE nhận được alertIds ngay trong response trả về
-        var alerts = transactionRuleService.evaluateAndCreateAlerts(txn);
-
+        // 3. Return response immediately (alerts will be created async)
         return TransactionResponse.builder()
                 .id(txn.getId())
-                .alertIds(alerts.stream().map(a -> a.getId()).toList())
+                .alertIds(new java.util.ArrayList<>()) // Always return empty list
                 .build();
     }
 }

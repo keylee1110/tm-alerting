@@ -2,9 +2,10 @@ package com.bankmonitoring.tm_alerting.controller;
 
 import com.bankmonitoring.tm_alerting.controller.dto.AuthDtos.*;
 import com.bankmonitoring.tm_alerting.service.AuthService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,11 +25,15 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest req, HttpServletResponse res) {
         var auth = authService.login(req);
         if (req.isUseCookie()) {
-            var ck = new Cookie("siti_token", auth.getToken());
-            ck.setPath("/");
-            ck.setHttpOnly(true);
-            ck.setMaxAge(60 * 60 * 12); // 12h
-            res.addCookie(ck);
+            ResponseCookie cookie = ResponseCookie.from("siti_token", auth.getToken())
+                    .path("/")
+                    .httpOnly(true)
+                    .maxAge(60 * 60 * 12) // 12h
+                    .sameSite("None") // Quan trọng cho cross-domain
+                    .secure(true)     // Bắt buộc khi SameSite=None
+                    .build();
+            res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
             // Ẩn token trong body nếu đã set cookie
             auth.setToken(null);
         }

@@ -25,6 +25,16 @@ public class AlertService {
                 .toList();
     }
 
+    public List<AlertView> getAlertsFiltered(String statusFilter) {
+        var list = switch (statusFilter == null ? "ALL" : statusFilter.toUpperCase()) {
+            case "PENDING"  -> alertRepository.findByStatus(AlertStatus.PENDING);
+            case "RESOLVED" -> alertRepository.findByStatus(AlertStatus.RESOLVED);
+            default         -> alertRepository.findAll();
+        };
+
+        return list.stream().map(this::toView).toList();
+    }
+
     public AlertView resolveAlert(String id, ResolveRequest req, Authentication auth) {
         // 1. Kiểm tra quyền ADMIN
         boolean isAdmin = auth != null && auth.getAuthorities().stream()

@@ -17,8 +17,10 @@ public class AlertController {
     private final AlertService alertService;
 
     @GetMapping("/alerts")
-    public ResponseEntity<List<AlertView>> getAlerts() {
-        return ResponseEntity.ok(alertService.getAllAlerts());
+    public ResponseEntity<List<AlertView>> getAlerts(
+            @RequestParam(name = "status", required = false) String status
+    ) {
+        return ResponseEntity.ok(alertService.getAlertsFiltered(status));
     }
 
     @PatchMapping("/alerts/{id}/resolve")

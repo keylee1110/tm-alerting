@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  data:
+    mongodb:
+      uri: ${MONGO_URI_DEV:mongodb://localhost:27017/tmalerting_dev}
+  data.mongodb.auto-index-creation: true
+
+logging:
+  level:
+    root: INFO
+    com.bankmonitoring: DEBUG

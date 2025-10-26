@@ -1,17 +1,9 @@
 spring:
   application:
     name: tm-alerting
-  data:
-    mongodb:
-      uri: ${MONGO_URI}
 
 server:
   port: 8080
 
 jwt:
   secret: ${JWT_SECRET}
-
-cloudflare:
-  r2:
-    access-key: ${R2_ACCESS_KEY}
-    secret-key: ${R2_SECRET_KEY}

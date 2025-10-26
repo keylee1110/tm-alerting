@@ -32,4 +32,11 @@ public class AuditService {
     public List<AuditLog> getRecentLogs() {
         return auditLogRepository.findAllByOrderByCreatedAtDesc();
     }
+
+    public List<AuditLog> getRecentLogsLimited(int limit) {
+        return auditLogRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .limit(limit)
+                .toList();
+    }
 }

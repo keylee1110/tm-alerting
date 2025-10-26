@@ -1,0 +1,24 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  data:
+    mongodb:
+      uri: ${MONGO_URI}
+  data.mongodb.auto-index-creation: false
+
+logging:
+  level:
+    root: INFO
+    com.bankmonitoring: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd'T'HH:mm:ssXXX} %-5level [%X{traceId:-}] %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+  endpoint:
+    health:
+      show-details: "never"

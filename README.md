@@ -1,24 +1,77 @@
-# TM-Alerting: Transaction Monitoring & Alerting API
+# Transaction Monitoring & Alerting System
 
-Đây là một API backend được xây dựng bằng Java & Spring Boot cho một hệ thống giám sát giao dịch ngân hàng mô phỏng. Ứng dụng có khả năng xử lý các giao dịch, áp dụng các quy tắc để phát hiện hoạt động đáng ngờ, và tạo ra các cảnh báo để nhân viên có thể xem xét.
+Một hệ thống full-stack mô phỏng quy trình giám sát giao dịch tài chính, được xây dựng cho các đội ngũ tuân thủ (compliance). Ứng dụng có khả năng xử lý giao dịch, tự động tạo cảnh báo cho các hoạt động đáng ngờ, và cung cấp một giao diện web để người dùng quản lý và xử lý các cảnh báo đó.
 
-## 🚀 Live Demo
+## 🚀 Live Demo & Hướng Dẫn Test
 
-Toàn bộ tài liệu và khả năng tương tác trực tiếp với API đều có sẵn thông qua Swagger UI.
+Bạn có thể trải nghiệm dự án qua giao diện web hoặc tương tác trực tiếp với API.
 
-**URL:** **https://tm-alerting.onrender.com/swagger-ui.html**
+-   **Frontend URL (Giao diện Web):** [https://tm-alerting.vercel.app/]
+-   **Backend API (Swagger UI):** [https://tm-alerting.onrender.com/swagger-ui.html](https://tm-alerting.onrender.com/swagger-ui.html)
 
-_(Lưu ý: Tên miền `tm-alerting.onrender.com` là ví dụ, bạn hãy thay thế bằng URL ứng dụng của bạn trên Render. Dịch vụ trên gói miễn phí có thể cần 30-60 giây để khởi động nếu không có ai truy cập.)_
+
+
+### Cách 1: Trải nghiệm qua Giao diện Web (Khuyên dùng)
+
+Đây là cách nhanh nhất để xem các tính năng chính của ứng dụng.
+
+1.  **Truy cập trang Frontend** ở URL trên.
+2.  **Đăng nhập** bằng tài khoản demo có sẵn:
+    -   **Email:** `admin1@example.com`
+    -   **Password:** `123`
+3.  **Khám phá Dashboard:**
+    -   Xem danh sách các cảnh báo giao dịch đáng ngờ.
+    -   Sử dụng bộ lọc để xem cảnh báo theo trạng thái (`PENDING`, `COMPLETED`).
+    -   Nhấp vào một cảnh báo để xem chi tiết.
+4.  **Xử lý cảnh báo:**
+    -   Trong chi tiết cảnh báo, chọn "Resolve", nhập lý do và xác nhận.
+    -   Bạn sẽ thấy trạng thái của cảnh báo được cập nhật.
+5.  **Kiểm tra Audit Log:**
+    -   Truy cập trang Audit Log (nếu có) để thấy hành động "Resolve" của bạn đã được hệ thống ghi lại.
+
+### Cách 2: Test API với Swagger UI (Dành cho Technical Reviewer)
+
+Cách này cho phép tương tác trực tiếp với các endpoint của backend.
+
+1.  **Truy cập trang Swagger UI** của backend.
+2.  **Tạo tài khoản mới:**
+    -   Tìm đến endpoint `POST /api/auth/register`.
+    -   Nhấp "Try it out" và điền thông tin của bạn vào request body. Ví dụ:
+        ```json
+        {
+          "email": "your-email@gmail.com",
+          "password": "your-strong-password",
+          "fullName": "Your Name"
+        }
+        ```
+    -   Nhấn "Execute" để tạo tài khoản.
+3.  **Đăng nhập để lấy Token:**
+    -   Tìm đến endpoint `POST /api/auth/login`.
+    -   Nhấp "Try it out", điền tài khoản bạn vừa tạo. **Quan trọng:** đặt `useCookie` thành `false` để token được trả về trong response.
+        ```json
+        {
+          "email": "your-email@gmail.com",
+          "password": "your-strong-password",
+          "useCookie": false
+        }
+        ```
+    -   Nhấn "Execute" và sao chép giá trị `token` trong phần response body.
+4.  **Ủy quyền (Authorize):**
+    -   Ở đầu trang Swagger, nhấp vào nút "Authorize".
+    -   Trong ô "Value", dán token theo định dạng `Bearer <your_token>`. Ví dụ: `Bearer eyJhbGciOiJIUzI1NiJ9...`
+    -   Nhấp "Authorize" để xác nhận. Giờ đây mọi yêu cầu từ Swagger sẽ được xác thực.
+5.  **Thử các endpoint được bảo vệ:**
+    -   Thử `GET /api/alerts` để lấy danh sách cảnh báo.
+    -   Thử `PATCH /api/alerts/{id}/resolve` để xử lý một cảnh báo.
 
 ---
 
 ## ✨ Tính năng chính
 
--   **Xác thực & Phân quyền:** Hệ thống đăng ký/đăng nhập dựa trên JWT (JSON Web Tokens).
--   **Quản lý Giao dịch:** Các endpoint để tạo và truy vấn lịch sử giao dịch.
--   **Hệ thống Cảnh báo:** Tự động tạo cảnh báo dựa trên các quy tắc nghiệp vụ (ví dụ: giao dịch có giá trị cao).
--   **Quản lý Cảnh báo:** Cho phép người dùng (nhân viên) xem, lọc và cập nhật trạng thái của các cảnh báo.
--   **Audit Log:** Ghi lại các hành động quan trọng trong hệ thống.
+-   **Giao diện Hiện đại:** Dashboard được xây dựng bằng Next.js và Tailwind CSS, responsive và dễ sử dụng.
+-   **Xác thực an toàn:** Đăng nhập bằng JWT, hỗ trợ cả `Bearer Token` và `HttpOnly`, `Secure`, `SameSite=None` cookie để tăng cường bảo mật.
+-   **Quản lý Cảnh báo:** Tạo, xem, lọc và xử lý các cảnh báo giao dịch đáng ngờ.
+-   **Audit Log:** Tự động ghi lại tất cả các hành động quan trọng (đăng nhập, xử lý cảnh báo) để đảm bảo tính minh bạch.
 -   **Tài liệu API tự động:** Tích hợp Swagger UI để cung cấp tài liệu API trực quan và tương tác.
 
 ---
@@ -26,66 +79,64 @@ _(Lưu ý: Tên miền `tm-alerting.onrender.com` là ví dụ, bạn hãy thay 
 ## 🛠️ Công nghệ sử dụng
 
 -   **Backend:**
-    -   Java 21
-    -   Spring Boot 3
+    -   Java 21, Spring Boot 3
     -   Spring Security (JWT Authentication)
-    -   Spring Data MongoDB
--   **Database:** MongoDB
--   **Build/Dependency:** Maven
--   **Deployment:** Docker
--   **API Documentation:** springdoc-openapi
+    -   MongoDB
+-   **Frontend:**
+    -   Next.js, React
+    -   TypeScript
+    -   Tailwind CSS
+-   **Build & Dependencies:**
+    -   Maven (Backend)
+    -   NPM (Frontend)
+-   **Deployment:**
+    -   Backend: Docker, Render
+    -   Frontend: Vercel
 
 ---
 
-## 🏁 Hướng dẫn cài đặt và chạy Local
+## 🏁 Hướng dẫn cài đặt Local
 
 ### Yêu cầu
+
 -   JDK 21
+-   Node.js & npm
 -   Maven
 -   Docker
 
-### Các bước thực hiện
+### Backend
 
-1.  **Clone repository:**
+1.  **Clone repository.**
+2.  **Khởi động PostgreSQL bằng Docker:**
     ```bash
-    git clone <your-repository-url>
-    cd tm-alerting
+    docker run -d --name postgres-dev -p 5432:5432 -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=tmalerting_dev postgres
     ```
-
-2.  **Khởi động MongoDB bằng Docker:**
-    Cách dễ nhất để có một database local là chạy MongoDB trong Docker.
+3.  **Cấu hình file `application-dev.yml`:**
+    Mở file `src/main/resources/application-dev.yml` và đảm bảo thông tin kết nối database khớp với Docker container.
+4.  **Chạy ứng dụng:**
     ```bash
-    docker run -d -p 27017:27017 --name mongo-dev mongo:latest
+    # Từ thư mục gốc của dự án
+    ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
     ```
+    Backend sẽ chạy tại `http://localhost:8080`.
 
-3.  **Tạo file môi trường `.env`:**
-    Tạo một file tên là `.env` ở thư mục gốc của project bằng cách sao chép từ file `.env.example`.
+### Frontend
+
+1.  **Di chuyển vào thư mục frontend** (giả sử tên là `frontend`):
     ```bash
-    # Trên Windows (Command Prompt)
-    copy .env.example .env
+    cd frontend
     ```
-    File `.env.example` đã có sẵn giá trị cho `MONGO_URI_DEV` để kết nối tới Docker container ở trên.
-
-4.  **Cấu hình biến môi trường:**
-    Mở file `.env` và điền một giá trị bí mật cho `JWT_SECRET`.
-    ```
-    # Ví dụ trong file .env
-    MONGO_URI_DEV=mongodb://localhost:27017/tmalerting_dev
-    JWT_SECRET=DayLaChuoiBiMatSieuDaiSieuAnToanCuaBan_DungChepCuaToi
-    ```
-
-5.  **Chạy ứng dụng:**
-    Sử dụng Maven wrapper để khởi động ứng dụng với profile `dev`.
+2.  **Cài đặt dependencies:**
     ```bash
-    # Trên Windows
-    mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=dev
+    npm install
     ```
-    Ứng dụng sẽ chạy tại `http://localhost:8080`.
-
----
-
-## 📖 API Documentation
-
-Tài liệu chi tiết về tất cả các API endpoint có thể được truy cập tại Swagger UI sau khi bạn khởi động ứng dụng:
-
-`http://localhost:8080/swagger-ui.html`
+3.  **Tạo file môi trường `.env.local`:**
+    Tạo file `.env.local` và khai báo URL của backend:
+    ```
+    NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
+    ```
+4.  **Chạy ứng dụng:**
+    ```bash
+    npm run dev
+    ```
+    Frontend sẽ chạy tại `http://localhost:3000`.
